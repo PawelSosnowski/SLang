@@ -52,19 +52,37 @@ public class LLVMActions extends SLangBaseListener {
        Value v1 = stack.pop();
        Value v2 = stack.pop();
        if( v1.type == v2.type ) {
-	  if( v1.type == VarType.INT ){
-             LLVMGenerator.add_i32(v1.name, v2.name); 
-             stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.INT) ); 
-          }
-	  if( v1.type == VarType.REAL ){
-             LLVMGenerator.add_double(v1.name, v2.name); 
-             stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.REAL) ); 
-         }
+         if( v1.type == VarType.INT ){
+                  LLVMGenerator.add_i32(v1.name, v2.name); 
+                  stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.INT) ); 
+               }
+         if( v1.type == VarType.REAL ){
+                  LLVMGenerator.add_double(v1.name, v2.name); 
+                  stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.REAL) ); 
+               }
        } else {
           error(ctx.getStart().getLine(), "add type mismatch");
        }
     }
 
+    @Override
+    public void exitSub(SLangParser.SubContext ctx) {
+      Value v1 = stack.pop();
+      Value v2 = stack.pop();
+      if( v1.type == v2.type ) {
+         if( v1.type == VarType.INT ){
+                  LLVMGenerator.sub_i32(v1.name, v2.name); 
+                  stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.INT) ); 
+               }
+         if( v1.type == VarType.REAL ){
+                  LLVMGenerator.sub_double(v1.name, v2.name); 
+                  stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.REAL) ); 
+               }
+      } else {
+         error(ctx.getStart().getLine(), "subtract type mismatch");
+      }
+   }
+    
     @Override 
     public void exitMult(SLangParser.MultContext ctx) { 
        Value v1 = stack.pop();
@@ -81,6 +99,24 @@ public class LLVMActions extends SLangBaseListener {
        } else {
           error(ctx.getStart().getLine(), "mult type mismatch");
        }
+    }
+    
+    @Override
+    public void exitDiv(SLangParser.DivContext ctx) {
+      Value v1 = stack.pop();
+      Value v2 = stack.pop();
+      if( v1.type == v2.type ) {
+    if( v1.type == VarType.INT ){
+            LLVMGenerator.div_i32(v1.name, v2.name); 
+            stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.INT) ); 
+         }
+    if( v1.type == VarType.REAL ){
+            LLVMGenerator.div_double(v1.name, v2.name); 
+            stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.REAL) ); 
+        }
+      } else {
+         error(ctx.getStart().getLine(), "division type mismatch");
+      }
     }
 
     @Override 
@@ -121,20 +157,20 @@ public class LLVMActions extends SLangBaseListener {
    @Override
    public void exitRead_double(SLangParser.Read_doubleContext ctx) {
       String ID = ctx.ID().getText();
-      //  if( ! variables.contains(ID) ) {
-      //     variables.add(ID);
-      //     LLVMGenerator.declare(ID);          
-      //  }
+      if( ! variables.containsKey(ID) ) {
+          variables.put(ID, VarType.REAL);
+          LLVMGenerator.declare_double(ID);          
+       }
       LLVMGenerator.scanf_double(ID);
    }
 
    @Override
    public void exitRead_int(SLangParser.Read_intContext ctx) {
       String ID = ctx.ID().getText();
-      // if( ! variables.contains(ID) ) {
-      //    variables.add(ID);
-      //    LLVMGenerator.declare(ID);          
-      // } 
+      if( ! variables.containsKey(ID) ) {
+         variables.put(ID, VarType.INT);
+         LLVMGenerator.declare_i32(ID);          
+      } 
       LLVMGenerator.scanf_i32(ID);
 
    }

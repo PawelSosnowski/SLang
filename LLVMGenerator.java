@@ -62,6 +62,15 @@ class LLVMGenerator{
       main_text += "%"+reg+" = fadd double "+val1+", "+val2+"\n";
       reg++;
    }
+   static void sub_i32(String val1, String val2){
+      main_text += "%"+reg+" = sub i32 "+val2+", "+val1+"\n";
+      reg++;
+   }
+
+   static void sub_double(String val1, String val2){
+      main_text += "%"+reg+" = fsub double "+val2+", "+val1+"\n";
+      reg++;
+   }
 
    static void mult_i32(String val1, String val2){
       main_text += "%"+reg+" = mul i32 "+val1+", "+val2+"\n";
@@ -72,6 +81,17 @@ class LLVMGenerator{
       main_text += "%"+reg+" = fmul double "+val1+", "+val2+"\n";
       reg++;
    }
+
+   static void div_i32(String val1, String val2){
+      main_text += "%"+reg+" = sdiv i32 "+val2+", "+val1+"\n";
+      reg++;
+   }
+
+   static void div_double(String val1, String val2){
+      main_text += "%"+reg+" = fdiv double "+val2+", "+val1+"\n";
+      reg++;
+   }
+
 
    static void sitofp(String id){
       main_text += "%"+reg+" = sitofp i32 "+id+" to double\n";
