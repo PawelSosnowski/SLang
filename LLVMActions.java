@@ -36,16 +36,24 @@ public class LLVMActions extends SLangBaseListener {
     public void exitProg(SLangParser.ProgContext ctx) { 
        System.out.println( LLVMGenerator.generate() );
     }
-
     @Override 
-    public void exitInt(SLangParser.IntContext ctx) { 
+    public void exitValue(SLangParser.ValueContext ctx) { 
+       if( ctx.ID() != null ){
+         String ID = ctx.ID().getText();     
+         if( variables.containsKey(ID) ) {
+            LLVMGenerator.load( ID );
+            stack.push( new Value("%"+(LLVMGenerator.reg-1), variables.get(ID)) ); 
+         } else {
+            error(ctx.getStart().getLine(), "unknown variable "+ID);         
+         }
+       } 
+       if( ctx.INT() != null ){
          stack.push( new Value(ctx.INT().getText(), VarType.INT) );       
-    } 
-
-    @Override 
-    public void exitReal(SLangParser.RealContext ctx) { 
-         stack.push( new Value(ctx.REAL().getText(), VarType.REAL) );       
-    } 
+       }
+       if( ctx.REAL() != null){
+          stack.push( new Value(ctx.REAL().getText(), VarType.REAL) );
+       } 
+    }
 
     @Override 
     public void exitAdd(SLangParser.AddContext ctx) { 
@@ -120,14 +128,14 @@ public class LLVMActions extends SLangBaseListener {
     }
 
     @Override 
-    public void exitToint(SLangParser.TointContext ctx) { 
+    public void exitToInt(SLangParser.ToIntContext ctx) { 
        Value v = stack.pop();
        LLVMGenerator.fptosi( v.name );
        stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.INT) ); 
     }
 
     @Override 
-    public void exitToreal(SLangParser.TorealContext ctx) { 
+    public void exitToReal(SLangParser.ToRealContext ctx) { 
        Value v = stack.pop();
        LLVMGenerator.sitofp( v.name );
        stack.push( new Value("%"+(LLVMGenerator.reg-1), VarType.REAL) ); 
@@ -155,7 +163,7 @@ public class LLVMActions extends SLangBaseListener {
    } 
    
    @Override
-   public void exitRead_double(SLangParser.Read_doubleContext ctx) {
+   public void exitReadDouble(SLangParser.ReadDoubleContext ctx) {
       String ID = ctx.ID().getText();
       if( ! variables.containsKey(ID) ) {
           variables.put(ID, VarType.REAL);
@@ -165,7 +173,7 @@ public class LLVMActions extends SLangBaseListener {
    }
 
    @Override
-   public void exitRead_int(SLangParser.Read_intContext ctx) {
+   public void exitReadInt(SLangParser.ReadIntContext ctx) {
       String ID = ctx.ID().getText();
       if( ! variables.containsKey(ID) ) {
          variables.put(ID, VarType.INT);
