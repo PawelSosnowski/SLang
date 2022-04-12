@@ -38,10 +38,10 @@ value: ID
 
 READ_DOUBLE: 'peepf' ;
 READ_INT:   'peepi' ;
-PRINT:	'yap' ;
+PRINT:	'yeet' ;
 
 TOINT: '(int)' ;
-TOREAL: '(float)' ;
+TOREAL: '(double)' ;
 
 ID:   ('a'..'z'|'A'..'Z')+ ;
 

@@ -41,7 +41,12 @@ public class LLVMActions extends SLangBaseListener {
        if( ctx.ID() != null ){
          String ID = ctx.ID().getText();     
          if( variables.containsKey(ID) ) {
-            LLVMGenerator.load( ID );
+            if( variables.get(ID) == VarType.INT){
+               LLVMGenerator.load_i32( ID );
+            }
+            else{
+               LLVMGenerator.load_double( ID );
+            }
             stack.push( new Value("%"+(LLVMGenerator.reg-1), variables.get(ID)) ); 
          } else {
             error(ctx.getStart().getLine(), "unknown variable "+ID);         

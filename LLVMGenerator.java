@@ -26,11 +26,6 @@ class LLVMGenerator{
       reg++;
    }
 
-   static void load(String id){
-      main_text += "%"+reg+" = load i32, i32* %"+id+"\n";
-      reg++;
-   }
-
    static void declare_i32(String id){
       main_text += "%"+id+" = alloca i32\n";
    }
