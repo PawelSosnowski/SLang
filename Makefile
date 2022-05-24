@@ -1,6 +1,6 @@
 ANTLR=/usr/local/lib/antlr-4.10-complete.jar
 
-all: generate compile test
+all: clean generate compile test
 
 generate:
 	java -jar $(ANTLR) -o output SLang.g4

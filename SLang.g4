@@ -4,10 +4,11 @@ prog: block;
 
 block: ( stat? NEWLINE )* ;
 
-stat:	IF comparison ':' blockif FI #if
-      | ID '=' expr0		#assign
-	| PRINT ID   		#print
-      | read0                 #read
+stat:	IF comparison ':' blockif FI  #if
+      | FOR repetitions ':' block ROF     #for
+      | ID '=' expr0		      #assign
+	| PRINT ID   		      #print
+      | read0                       #read
 ;
 
 expr0:  expr1	            #single0
@@ -39,6 +40,9 @@ value: ID
       | INT
 ;
 
+repetitions: INT
+;
+
 comparison: ID '==' INT       #equal
             | ID '!=' INT     #nonequal
 ;
@@ -47,6 +51,8 @@ blockif: block;
 
 IF: 'if';
 FI: 'fi';
+FOR: 'for';
+ROF: 'rof';
 
 READ_DOUBLE: 'peepf' ;
 READ_INT:   'peepi' ;
@@ -69,4 +75,4 @@ NEWLINE:	'\r'? '\n' ;
 
 WS:   (' '|'\t')+ { skip(); } ;
 
-//TODO: loop, function
+//TODO: loop, scopes, function

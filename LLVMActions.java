@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Stack;
 
+
 enum VarType{ INT, REAL, UNKNOWN }
 
 class Value{ 
@@ -16,6 +17,7 @@ public class LLVMActions extends SLangBaseListener {
     
     HashMap<String, VarType> variables = new HashMap<String, VarType>();
     Stack<Value> stack = new Stack<Value>();
+    String value;
 
     @Override
     public void exitAssign(SLangParser.AssignContext ctx) { 
@@ -223,5 +225,21 @@ public class LLVMActions extends SLangBaseListener {
          System.err.println("Line "+ ctx.getStart().getLine()+", unknown variable: "+ ID);
       }
    }
+
+   @Override
+   public void exitRepetitions(SLangParser.RepetitionsContext ctx) {
+       if( ctx.INT() != null ){
+           value = ctx.INT().getText();
+       }
+       LLVMGenerator.repeatstart(value);
+   }
+
+   @Override
+   public void exitBlock(SLangParser.BlockContext ctx) {
+       if( ctx.getParent() instanceof SLangParser.ForContext ){
+           LLVMGenerator.repeatend();
+       }
+   }
+
 
 }
