@@ -9,10 +9,11 @@ public class Main {
 
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         SLangParser parser = new SLangParser(tokens);
-
+        
         ParseTree tree = parser.prog(); 
 
-        //System.out.println(tree.toStringTree(parser));
+        System.out.println(";SLang intermediate representation \n");
+        // System.out.println(";"+tree.toStringTree(parser));
 
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(new LLVMActions(), tree);

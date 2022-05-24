@@ -1,8 +1,11 @@
 grammar SLang;
 
-prog: ( stat? NEWLINE )* ;
+prog: block;
 
-stat:	 ID '=' expr0		#assign
+block: ( stat? NEWLINE )* ;
+
+stat:	IF comparison ':' blockif FI #if
+      | ID '=' expr0		#assign
 	| PRINT ID   		#print
       | read0                 #read
 ;
@@ -16,7 +19,7 @@ expr0:  expr1	            #single0
 
 expr1:  expr2			#single1
       | expr2 MULT expr1	#mult
-      | expr2 DIV expr1       #div 
+      | expr2 DIV expr1       #div
       | expr2 MULT expr2	#mult
       | expr2 DIV expr2       #div 
 ;
@@ -35,6 +38,15 @@ value: ID
       | REAL
       | INT
 ;
+
+comparison: ID '==' INT       #equal
+            | ID '!=' INT     #nonequal
+;
+
+blockif: block;
+
+IF: 'if';
+FI: 'fi';
 
 READ_DOUBLE: 'peepf' ;
 READ_INT:   'peepi' ;
@@ -56,3 +68,5 @@ DIV:  '/' ;
 NEWLINE:	'\r'? '\n' ;
 
 WS:   (' '|'\t')+ { skip(); } ;
+
+//TODO: loop, function

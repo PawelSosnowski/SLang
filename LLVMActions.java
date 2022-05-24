@@ -187,4 +187,41 @@ public class LLVMActions extends SLangBaseListener {
       LLVMGenerator.scanf_i32(ID);
 
    }
+
+   @Override
+   public void enterBlockif(SLangParser.BlockifContext ctx) {
+      LLVMGenerator.ifstart();
+   }
+
+   @Override
+   public void exitBlockif(SLangParser.BlockifContext ctx) {
+      LLVMGenerator.ifend();
+   }
+
+   @Override
+   public void exitEqual(SLangParser.EqualContext ctx) {
+      //  System.out.println( "Found equality: " + ctx.ID().getText() + " == " + ctx.INT().getText());
+       String ID = ctx.ID().getText();
+       String INT = ctx.INT().getText();
+       if( variables.containsKey(ID) ) {
+           LLVMGenerator.icmp( ID, INT );
+       } else {
+           ctx.getStart().getLine();
+           System.err.println("Line " + ctx.getStart().getLine() + ", unknown variable: " + ID);
+       }
+   }
+
+   @Override
+   public void exitNonequal(SLangParser.NonequalContext ctx) {
+      //  System.out.println( "Found inequality: " + ctx.ID().getText() + " != " + ctx.INT().getText());
+       String ID = ctx.ID().getText();
+       String INT = ctx.INT().getText();
+       if( variables.containsKey(ID) ) {
+         LLVMGenerator.incmp( ID, INT );
+      } else {
+         ctx.getStart().getLine();
+         System.err.println("Line "+ ctx.getStart().getLine()+", unknown variable: "+ ID);
+      }
+   }
+
 }
