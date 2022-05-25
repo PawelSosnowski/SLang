@@ -2,13 +2,14 @@ grammar SLang;
 
 prog: block;
 
-block: ( stat? NEWLINE )* ;
+block: ( (stat|function)? NEWLINE )* ;
 
 stat:	IF comparison ':' blockif FI  #if
       | FOR repetitions ':' block ROF     #for
       | ID '=' expr0		      #assign
 	| PRINT ID   		      #print
       | read0                       #read
+      | ID '()'                     #call
 ;
 
 expr0:  expr1	            #single0
@@ -47,12 +48,19 @@ comparison: ID '==' INT       #equal
             | ID '!=' INT     #nonequal
 ;
 
+function: FUN fid fblock NUF;
+
+fid: ID;
+fblock: ( stat? NEWLINE )*;
+
 blockif: block;
 
 IF: 'if';
 FI: 'fi';
 FOR: 'for';
 ROF: 'rof';
+FUN: 'fun';
+NUF: 'nuf';
 
 READ_DOUBLE: 'peepf' ;
 READ_INT:   'peepi' ;
@@ -75,4 +83,4 @@ NEWLINE:	'\r'? '\n' ;
 
 WS:   (' '|'\t')+ { skip(); } ;
 
-//TODO: loop, scopes, function
+//TODO: scopes, function

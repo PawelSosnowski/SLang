@@ -1,6 +1,6 @@
 import java.util.HashMap;
 import java.util.Stack;
-
+import java.util.HashSet;
 
 enum VarType{ INT, REAL, UNKNOWN }
 
@@ -16,8 +16,9 @@ class Value{
 public class LLVMActions extends SLangBaseListener {
     
     HashMap<String, VarType> variables = new HashMap<String, VarType>();
+    HashSet<String> functions = new HashSet<String>();
     Stack<Value> stack = new Stack<Value>();
-    String value;
+    String value, function;
 
     @Override
     public void exitAssign(SLangParser.AssignContext ctx) { 
@@ -36,6 +37,7 @@ public class LLVMActions extends SLangBaseListener {
 
     @Override 
     public void exitProg(SLangParser.ProgContext ctx) { 
+       LLVMGenerator.close_main();
        System.out.println( LLVMGenerator.generate() );
     }
     @Override 
@@ -240,6 +242,33 @@ public class LLVMActions extends SLangBaseListener {
            LLVMGenerator.repeatend();
        }
    }
+
+   @Override
+   public void exitFid(SLangParser.FidContext ctx) {
+      String ID = ctx.ID().getText();
+      functions.add(ID);
+      function = ID;
+      LLVMGenerator.functionstart(ID);
+   }
+
+   @Override
+   public void exitFblock(SLangParser.FblockContext ctx){
+      LLVMGenerator.functionend();
+   }
+
+   @Override
+   public void exitCall(SLangParser.CallContext ctx) {
+       if( functions.contains(function) ){
+           System.out.println( ";;;Calling void function: " + ctx.ID().getText());
+           LLVMGenerator.call(ctx.ID().getText());
+       }
+       else
+       {
+           error(ctx.getStart().getLine(), "Function " + ctx.ID().getText() + " not declared");
+       }
+
+   }
+
 
 
 }
